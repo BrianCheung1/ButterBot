@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-TOKEN = ''
+TOKEN = 'A'
 
 client = commands.Bot(command_prefix = "`")
 
