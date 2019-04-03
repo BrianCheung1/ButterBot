@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 
 
-TOKEN = 'AA'
+
+TOKEN = ''
 
 client = commands.Bot(command_prefix = "`")
 
@@ -47,5 +48,35 @@ async def clear(ctx, amount):
         messages.append(message)
     await client.delete_messages(messages)
     await client.say(str(amount) + ' Messages Deleted')
+
+@client.event
+async def on_ready():
+    await client.change_presence(game=discord.Game(name='You', type= 3))
+    #type=2 Listening to
+    #type=3 Watching
+
+@client.command()
+async def display():
+
+    embed = discord.Embed(
+        title = 'Title',
+        description = 'This is the description',
+        colour = discord.Colour.red()
+    )
+
+    embed.set_image(url='https://im5.ezgif.com/tmp/ezgif-5-5653b371f6e0.png')
+    embed.set_author(name='Butter')
+    embed.add_field(name='Field Name', value='Field Value', inline=True)
+    embed.set_footer(text='This is the footer')
+
+    await client.say(embed=embed)
+
+@client.command()
+async def emote():
+    await client.say('<:monkaHmm:563030503523876864>')
+
+
+
+
 
 client.run(TOKEN)
