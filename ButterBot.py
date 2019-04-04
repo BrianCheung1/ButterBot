@@ -5,7 +5,7 @@ from discord.ext.commands import has_permissions
 
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKUjZg.963oSeZTINzsxsU8WJG7J1h-8WE'
+TOKEN = ''
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
@@ -100,15 +100,6 @@ async def display():
 
     await client.say(embed=embed)
 
-#Command to randomly send one emote from list
-@client.command(pass_context=True)
-async def emote(ctx):
-    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>']
-    channel = ctx.message.channel
-    randomemote = random.choice(list)
-    await client.send_message(channel, randomemote)
-
-
 #command to spam random emotes in list in a 5x5
 @client.command(pass_context=True)
 #@has_permissions(ban_members=True)
@@ -178,6 +169,69 @@ async def leave(ctx):
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect()
+
+#command to play rock,paper,scissors vs the bot
+@client.command(pass_context=True)
+async def rps(ctx, arg1, arg2):
+    list = ['rock', 'paper', 'scissors']
+    randomrps = random.choice(list)
+    author = ctx.message.author.mention
+    await client.say(author + ' picked ' + arg1)
+
+    #if user enters something besides rock,paper,scissors
+    if (arg1 != 'rock' and arg1 != 'paper' and arg1 != 'scissors'):
+        await client.say('Please enter a proper choice')
+
+    #if user enters correct term, then lets player2 choose
+    elif (arg1 == 'rock' or  arg1 =='paper' or arg1 == 'scissors'):
+        await client.say(arg2 + ' picked ' + randomrps)
+
+    #if user loses against player2, prints player2 + ' Lose'
+    if(arg1 == 'rock' and randomrps == 'paper' or
+            arg1 == 'scissors' and randomrps == 'rock' or
+                arg1 == 'paper' and randomrps == 'scissors'):
+        await client.say(arg2 + ' Loses')
+
+    #If user wins against player2, prints 'You Win'
+    if(arg1 == 'paper' and randomrps == 'rock' or
+            arg1 == 'rock' and randomrps == 'scissors' or
+            arg1 == 'scissors' and randomrps == 'paper'):
+        await client.say(author + ' Wins')
+
+    #If User ties with player2, prints 'You Tied'
+    if(arg1 == randomrps):
+        await client.say(author + ' and ' + arg2 + ' Tied')
+
+
+#command to play simpleblackjack
+@client.command(pass_context=True)
+async def bj(ctx, message):
+    author = ctx.message.author.mention
+    #Can't use string of numbers since can't strings as int
+    list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    #4 different cards 2 for each player
+    randomcard1 = random.choice(list)
+    randomcard2 = random.choice(list)
+    randomcard3 = random.choice(list)
+    randomcard4 = random.choice(list)
+    #Adds the two card each player has
+    sum = int(randomcard1 + randomcard2)
+    sum2 = int(randomcard3 + randomcard4)
+    await client.say(str(randomcard1) + ' ' + str(randomcard2) + ' = ' + str(sum))
+    await client.say(str(randomcard3) + ' ' + str(randomcard4) + ' = ' + str(sum2))
+    #win conditions of simpleblackjack
+    if(randomcard1 + randomcard2 > randomcard3 + randomcard4):
+        await client.say(author + ' Wins')
+    if(randomcard1 + randomcard2 < randomcard3 + randomcard4):
+        await client.say(message + ' Wins')
+    if(randomcard1 + randomcard2 == randomcard3 + randomcard4):
+        await client.say(author + ' and ' + member + ' Tied')
+
+
+
+
+
+
 
 """
 ***********************************************************************************************************************
