@@ -5,7 +5,7 @@ from discord.ext.commands import has_permissions
 
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKUjZg.963oSeZTINzsxsU8WJG7J1h-8WE'
+TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKWTgA.1jkDIcdq7qCf_Ma54Vs4XNi5SGM'
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
