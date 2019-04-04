@@ -1,9 +1,11 @@
 import discord
+import random
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 
 
 
-TOKEN = ''
+TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKUjZg.963oSeZTINzsxsU8WJG7J1h-8WE'
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
@@ -72,6 +74,7 @@ async def echo(*args):
 
 #Command to clear messages
 @client.command(pass_context=True)
+@has_permissions(ban_members=True)
 async def clear(ctx, amount):
     channel = ctx.message.channel
     messages = []
@@ -97,10 +100,54 @@ async def display():
 
     await client.say(embed=embed)
 
-#Command to send one emote
-@client.command()
-async def emote():
-    await client.say('<:monkaHmm:563030503523876864>')
+#Command to randomly send one emote from list
+@client.command(pass_context=True)
+async def emote(ctx):
+    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>']
+    channel = ctx.message.channel
+    randomemote = random.choice(list)
+    await client.send_message(channel, randomemote)
+
+
+#command to spam random emotes in list in a 5x5
+@client.command(pass_context=True)
+#@has_permissions(ban_members=True)
+async def spamharder(ctx):
+    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
+            '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
+            '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
+    channel = ctx.message.channel
+    for i in range(5):
+        randomemote = random.choice(list)
+        randomemote2 = random.choice(list)
+        randomemote3 = random.choice(list)
+        randomemote4 = random.choice(list)
+        randomemote5 = random.choice(list)
+        await client.say(randomemote + randomemote2 + randomemote3 + randomemote4 + randomemote5)
+
+#command to spam random emotes in list in a 1x5
+@client.command(pass_context=True)
+#@has_permissions(ban_members=True)
+async def spamsofter(ctx):
+    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
+            '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
+            '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
+    channel = ctx.message.channel
+    for i in range(1):
+        randomemote = random.choice(list)
+        randomemote2 = random.choice(list)
+        randomemote3 = random.choice(list)
+        randomemote4 = random.choice(list)
+        randomemote5 = random.choice(list)
+        await client.say(randomemote + randomemote2 + randomemote3 + randomemote4 + randomemote5)
+
+#command to slap mention user
+@client.command(pass_context=True)
+async def slap(ctx, arg):
+    author = ctx.message.author.mention
+    list = ['a rock', 'a pan', 'a chair', 'a fish', 'a pineapple', 'their majestic 🍆 ', 'a door', 'their hand']
+    randomchoice = random.choice(list)
+    await client.say(str(author) + ' has slapped ' + arg + ' with ' + randomchoice)
 
 #Command to send User a help list of all commands
 @client.command(pass_context=True)
