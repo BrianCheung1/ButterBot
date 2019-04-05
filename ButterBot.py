@@ -2,10 +2,13 @@ import discord
 import random
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+from discord.utils import get
+import asyncio, json, requests
+import os, time, re, subprocess
 
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKWTgA.1jkDIcdq7qCf_Ma54Vs4XNi5SGM'
+TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKZdBQ.gME7tk62HHFzmcfx62lwgvFjfF0'
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
@@ -34,7 +37,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 #Event to repeat back deleted message
-""""@client.event
+"""@client.event
 async def on_message_delete(message):
     author = message.author
     content = message.content
@@ -100,19 +103,18 @@ async def display():
 
     await client.say(embed=embed)
 
-#Command to randomly send one emote from list
+#command to spam arg
 @client.command(pass_context=True)
-async def emote(ctx):
-    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>']
-    channel = ctx.message.channel
-    randomemote = random.choice(list)
-    await client.send_message(channel, randomemote)
-
+async def spam(ctx, arg):
+    await client.delete_message(ctx.message)
+    for i in range(5):
+        await client.say((arg + ' ')*5)
 
 #command to spam random emotes in list in a 5x5
 @client.command(pass_context=True)
 #@has_permissions(ban_members=True)
 async def spamharder(ctx):
+    await client.delete_message(ctx.message)
     list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
             '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
             '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
@@ -129,6 +131,7 @@ async def spamharder(ctx):
 @client.command(pass_context=True)
 #@has_permissions(ban_members=True)
 async def spamsofter(ctx):
+    await client.delete_message(ctx.message)
     list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
             '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
             '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
@@ -165,7 +168,7 @@ async def help(ctx):
     await client.send_message(author, embed=embed)
     #send_message = sends to user DM
     #say = send in channel
-
+"""
 #Commands to get bot to join server
 @client.command(pass_context=True)
 async def join(ctx):
@@ -178,6 +181,91 @@ async def leave(ctx):
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect()
+"""
+#command to play rock,paper,scissors vs the bot
+@client.command(pass_context=True)
+async def rps(ctx, arg1, arg2):
+    list = ['rock', 'paper', 'scissors']
+    randomrps = random.choice(list)
+    author = ctx.message.author.mention
+    await client.say(author + ' picked ' + arg1)
+
+    #if user enters something besides rock,paper,scissors
+    if (arg1 != 'rock' and arg1 != 'paper' and arg1 != 'scissors'):
+        await client.say('Please enter a proper choice')
+
+    #if user enters correct term, then lets player2 choose
+    elif (arg1 == 'rock' or  arg1 =='paper' or arg1 == 'scissors'):
+        await client.say(arg2 + ' picked ' + randomrps)
+
+    #if user loses against player2, prints player2 + ' Wins'
+    if(arg1 == 'rock' and randomrps == 'paper' or
+            arg1 == 'scissors' and randomrps == 'rock' or
+                arg1 == 'paper' and randomrps == 'scissors'):
+        await client.say(arg2 + ' Wins')
+
+    #If user wins against player2, prints 'You Win'
+    if(arg1 == 'paper' and randomrps == 'rock' or
+            arg1 == 'rock' and randomrps == 'scissors' or
+            arg1 == 'scissors' and randomrps == 'paper'):
+        await client.say(author + ' Wins')
+
+    #If User ties with player2, prints 'You Tied'
+    if(arg1 == randomrps):
+        await client.say(author + ' and ' + arg2 + ' Tied')
+
+
+#command to play simpleblackjack
+@client.command(pass_context=True)
+async def bj(ctx, message):
+    author = ctx.message.author.mention
+    #Can't use string of numbers since can't strings as int
+    list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    #4 different cards 2 for each player
+    randomcard1 = random.choice(list)
+    randomcard2 = random.choice(list)
+    randomcard3 = random.choice(list)
+    randomcard4 = random.choice(list)
+    #Adds the two card each player has
+    sum = int(randomcard1 + randomcard2)
+    sum2 = int(randomcard3 + randomcard4)
+    await client.say(str(randomcard1) + ' ' + str(randomcard2) + ' = ' + str(sum))
+    await client.say(str(randomcard3) + ' ' + str(randomcard4) + ' = ' + str(sum2))
+    #win conditions of simpleblackjack
+    if(randomcard1 + randomcard2 > randomcard3 + randomcard4):
+        await client.say(author + ' Wins')
+    if(randomcard1 + randomcard2 < randomcard3 + randomcard4):
+        await client.say(message + ' Wins')
+    if(randomcard1 + randomcard2 == randomcard3 + randomcard4):
+        await client.say(author + ' and ' + member + ' Tied')
+
+
+
+
+
+@client.command(pass_context=True)
+async def russian(ctx):
+    await client.say('Please type `join to enter')
+    if ctx.message.author == client.user:
+        return
+
+client.counter = 0
+@client.event
+async def on_message(message):
+
+    if message.author == client.user:
+        return
+    if message.content == '`join':
+        client.counter += 1
+        await client.send_message(message.channel, 'Player ' + str(client.counter) + ': ' + str(message.author) + ' Entered')
+    if message.content == '`end':
+        random1 = random.randint(1, (client.counter))
+        await client.send_message(message.channel, 'Player ' + str(random1) + ' died a horrible death')
+        client.counter = 0
+    await client.process_commands(message)
+
+
+
 
 """
 ***********************************************************************************************************************
