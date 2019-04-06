@@ -8,12 +8,12 @@ import os, time, re, subprocess
 
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKZdBQ.gME7tk62HHFzmcfx62lwgvFjfF0'
+TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKfqkQ.y-t6oPnU85Ds6qb-COdLnVr9GSs'
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
 
-
+client.counter = 0
 
 """
 ***********************************************************************************************************************
@@ -24,9 +24,13 @@ Events
 """
 
 #Event to print ready when bot starts
+#Event to change game status
+    #type 2 = listening
+    #type 1 = playing
 @client.event
 async def on_ready():
     print('Ready')
+    await client.change_presence(game=discord.Game(name='You', type=3))
 
 #Event to print all messages in the server
 @client.event
@@ -34,23 +38,48 @@ async def on_message(message):
     author = message.author
     content = message.content
     print('{}: {}'.format(author,content))
+
+    """
+    ***********************************************************************************************************************
+
+                                               Simple Russian Roulette
+
+    ***********************************************************************************************************************
+    """
+#if message author is client
+    if message.author == client.user:
+        return
+#if message == 'join
+    if message.content == '`join':
+        client.counter += 1
+        await client.send_message(message.channel,'Player ' + str(client.counter) + ': ' + str(message.author) + ' Entered')
+#if mesage == `end
+    if message.content == '`end':
+#chooses random number from 1 to # of players that join
+        random1 = random.randint(1, (client.counter))
+#Sends message with random number chosen
+        await client.send_message(message.channel, 'Player ' + str(random1) + ' died a horrible death')
+#resets counter back to 0
+        client.counter = 0
+#command so that all other commands work
     await client.process_commands(message)
 
+@client.command(pass_context=True)
+async def russian(ctx):
+    await client.say('Please type `join to enter')
+
+
+
 #Event to repeat back deleted message
-"""@client.event
+"""
+@client.event
 async def on_message_delete(message):
     author = message.author
     content = message.content
     channel = message.channel
     await client.send_message(channel, '{}: {}'.format(author,content))
-    """
+"""
 
-#Event to show status of bot
-@client.event
-async def on_ready():
-    await client.change_presence(game=discord.Game(name='You', type= 3))
-    #type=2 Listening to
-    #type=3 Watching
 
 
 """
@@ -105,7 +134,7 @@ async def display():
 
 #command to spam arg
 @client.command(pass_context=True)
-async def spam(ctx, arg):
+async def spam(ctx, *, arg):
     await client.delete_message(ctx.message)
     for i in range(5):
         await client.say((arg + ' ')*5)
@@ -168,6 +197,8 @@ async def help(ctx):
     await client.send_message(author, embed=embed)
     #send_message = sends to user DM
     #say = send in channel
+
+
 """
 #Commands to get bot to join server
 @client.command(pass_context=True)
@@ -182,6 +213,16 @@ async def leave(ctx):
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect()
 """
+
+
+"""
+***********************************************************************************************************************
+
+                                        Simple Rock, Paper, Scissors 
+
+***********************************************************************************************************************
+"""
+
 #command to play rock,paper,scissors vs the bot
 @client.command(pass_context=True)
 async def rps(ctx, arg1, arg2):
@@ -215,6 +256,14 @@ async def rps(ctx, arg1, arg2):
         await client.say(author + ' and ' + arg2 + ' Tied')
 
 
+"""
+***********************************************************************************************************************
+
+                                        Simple Blackjack
+
+***********************************************************************************************************************
+"""
+
 #command to play simpleblackjack
 @client.command(pass_context=True)
 async def bj(ctx, message):
@@ -240,29 +289,6 @@ async def bj(ctx, message):
         await client.say(author + ' and ' + member + ' Tied')
 
 
-
-
-
-@client.command(pass_context=True)
-async def russian(ctx):
-    await client.say('Please type `join to enter')
-    if ctx.message.author == client.user:
-        return
-
-client.counter = 0
-@client.event
-async def on_message(message):
-
-    if message.author == client.user:
-        return
-    if message.content == '`join':
-        client.counter += 1
-        await client.send_message(message.channel, 'Player ' + str(client.counter) + ': ' + str(message.author) + ' Entered')
-    if message.content == '`end':
-        random1 = random.randint(1, (client.counter))
-        await client.send_message(message.channel, 'Player ' + str(random1) + ' died a horrible death')
-        client.counter = 0
-    await client.process_commands(message)
 
 
 
