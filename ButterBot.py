@@ -279,9 +279,16 @@ async def bj(ctx, message):
 
 @client.command()
 async def roll():
+    #list of numbers 1 to 6 with their IDs
     list = ['<:one:563957318354468872>', '<:two:563957403289255936>', '<:three:563957448591802398>', '<:four:563957455885828107>', '<:five:563957461514452992>', '<:six:563957468217081874>']
+    #picks a random choice out of the list
     randomnum = random.choice(list)
+    #prints random number into discord channel
     await client.say(randomnum)
+
+@client.command(pass_context=True)
+async def urban(*arg):
+    await client.say(arg)
 
 
 
