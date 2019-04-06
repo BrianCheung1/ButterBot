@@ -8,7 +8,7 @@ import os, time, re, subprocess
 
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKfqkQ.y-t6oPnU85Ds6qb-COdLnVr9GSs'
+TOKEN = ''
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
@@ -67,18 +67,6 @@ async def on_message(message):
 @client.command(pass_context=True)
 async def russian(ctx):
     await client.say('Please type `join to enter')
-
-
-
-#Event to repeat back deleted message
-"""
-@client.event
-async def on_message_delete(message):
-    author = message.author
-    content = message.content
-    channel = message.channel
-    await client.send_message(channel, '{}: {}'.format(author,content))
-"""
 
 
 
@@ -289,7 +277,11 @@ async def bj(ctx, message):
         await client.say(author + ' and ' + member + ' Tied')
 
 
-
+@client.command()
+async def roll():
+    list = ['<:one:563957318354468872>', '<:two:563957403289255936>', '<:three:563957448591802398>', '<:four:563957455885828107>', '<:five:563957461514452992>', '<:six:563957468217081874>']
+    randomnum = random.choice(list)
+    await client.say(randomnum)
 
 
 
