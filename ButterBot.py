@@ -5,15 +5,24 @@ from discord.ext.commands import has_permissions
 from discord.utils import get
 import asyncio, json, requests
 import os, time, re, subprocess
+from discord.utils import get
 
 
-
-TOKEN = ''
+TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKjcIg.1AkGEUkI6x2FVtfi63SIUllovlo'
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
 
 client.counter = 0
+players = {}
+queues = {}
+
+def check_queue(id):
+    if queues[id] != []:
+        player = queues[id].pop(0)
+        players[id] = player
+        player.start()
+
 
 """
 ***********************************************************************************************************************
@@ -50,7 +59,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 #if message == 'join
-    if message.content == '`join':
+    if message.content == '`enter':
         client.counter += 1
         await client.send_message(message.channel,'Player ' + str(client.counter) + ': ' + str(message.author) + ' Entered')
 #if mesage == `end
@@ -66,7 +75,7 @@ async def on_message(message):
 
 @client.command(pass_context=True)
 async def russian(ctx):
-    await client.say('Please type `join to enter')
+    await client.say('Please type `enter to enter')
 
 
 
@@ -92,6 +101,14 @@ async def echo(*args):
         output += ' '
     await client.say(output)
 
+"""
+***********************************************************************************************************************
+
+                                        Simple Clear
+
+***********************************************************************************************************************
+"""
+
 #Command to clear messages
 @client.command(pass_context=True)
 @has_permissions(ban_members=True)
@@ -102,6 +119,14 @@ async def clear(ctx, amount):
         messages.append(message)
     await client.delete_messages(messages)
     await client.say(str(amount) + ' Messages Deleted')
+
+"""
+***********************************************************************************************************************
+
+                                        Simple Embed test
+
+***********************************************************************************************************************
+"""
 
 #Command to send an embed text
 @client.command()
@@ -120,46 +145,29 @@ async def display():
 
     await client.say(embed=embed)
 
+"""
+***********************************************************************************************************************
+
+                                        Simple Spam
+
+***********************************************************************************************************************
+"""
+
 #command to spam arg
 @client.command(pass_context=True)
-async def spam(ctx, *, arg):
+async def spam(ctx, *arg):
     await client.delete_message(ctx.message)
     for i in range(5):
-        await client.say((arg + ' ')*5)
+        await client.say(('{}'.format(' '.join(arg))+ ' ')*5)
 
-#command to spam random emotes in list in a 5x5
-@client.command(pass_context=True)
-#@has_permissions(ban_members=True)
-async def spamharder(ctx):
-    await client.delete_message(ctx.message)
-    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
-            '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
-            '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
-    channel = ctx.message.channel
-    for i in range(5):
-        randomemote = random.choice(list)
-        randomemote2 = random.choice(list)
-        randomemote3 = random.choice(list)
-        randomemote4 = random.choice(list)
-        randomemote5 = random.choice(list)
-        await client.say(randomemote + randomemote2 + randomemote3 + randomemote4 + randomemote5)
+"""
+***********************************************************************************************************************
 
-#command to spam random emotes in list in a 1x5
-@client.command(pass_context=True)
-#@has_permissions(ban_members=True)
-async def spamsofter(ctx):
-    await client.delete_message(ctx.message)
-    list = ['<:monkaHmm:493207187532021781>', '<:Kappa:420687983365193729>', '<a:boi:483851561232105472>',
-            '<a:pepedance:483851585546485760>', '<a:hang:483856862861590528>', '<:Poggers:420689001804988418>',
-            '<:KreyGasm:421361320508522506>', '<:feelsbadman:420689100564332545>', '<:Pepehands:424250946827321354>']
-    channel = ctx.message.channel
-    for i in range(1):
-        randomemote = random.choice(list)
-        randomemote2 = random.choice(list)
-        randomemote3 = random.choice(list)
-        randomemote4 = random.choice(list)
-        randomemote5 = random.choice(list)
-        await client.say(randomemote + randomemote2 + randomemote3 + randomemote4 + randomemote5)
+                                        Simple Slap
+
+***********************************************************************************************************************
+"""
+
 
 #command to slap mention user
 @client.command(pass_context=True)
@@ -168,6 +176,14 @@ async def slap(ctx, arg):
     list = ['a rock', 'a pan', 'a chair', 'a fish', 'a pineapple', 'their majestic 🍆 ', 'a door', 'their hand']
     randomchoice = random.choice(list)
     await client.say(str(author) + ' has slapped ' + arg + ' with ' + randomchoice)
+
+"""
+***********************************************************************************************************************
+
+                                        Simple Help
+
+***********************************************************************************************************************
+"""
 
 #Command to send User a help list of all commands
 @client.command(pass_context=True)
@@ -178,21 +194,31 @@ async def help(ctx):
     )
     embed.set_author(name='Help')
     embed.add_field(name='`ping', value='Returns pong', inline=False)
-    embed.add_field(name='`echo {text}', value='Returns Entered text', inline=False)
+    embed.add_field(name='`echo', value='Returns Entered text', inline=False)
     embed.add_field(name='`display', value='Returns embed example', inline=False)
     embed.add_field(name='`emote', value='Returns an emote ', inline=False)
     embed.add_field(name='`join/`leave ', value='Bot joins/leaves the server ', inline=False)
-    await client.send_message(author, embed=embed)
+    embed.add_field(name='`ugg ', value='searches aram build on ugg ', inline=False)
+    embed.add_field(name='`opgg ', value='searchs opgg for user ', inline=False)
+    embed.add_field(name='`rps {choice} {user}', value='plays rock, paper, scissors with mentioned user ', inline=False)
+    embed.add_field(name='`bj (user)', value='plays simple blackjack with mentioned user ', inline=False)
+    embed.add_field(name='`roll ', value='rolls a number from 1 to 6 ', inline=False)
+    embed.add_field(name='`slap ', value='slaps mentioned user ', inline=False)
+    embed.add_field(name='`spam ', value='spams user input 5x5 ', inline=False)
+    await client.send_message(ctx.message.channel, embed=embed)
     #send_message = sends to user DM
     #say = send in channel
 
-
 """
-#Commands to get bot to join server
-@client.command(pass_context=True)
-async def join(ctx):
-    channel = ctx.message.author.voice.voice_channel
-    await client.join_voice_channel(channel)
+***********************************************************************************************************************
+
+                                        Simple Music Player
+
+***********************************************************************************************************************
+"""
+
+
+
 
 #Command to get bot to leave server
 @client.command(pass_context=True)
@@ -200,7 +226,45 @@ async def leave(ctx):
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect()
-"""
+
+#Commands to get bot to join server
+@client.command(pass_context=True)
+async def play(ctx, url):
+    channel = ctx.message.author.voice.voice_channel
+    await client.join_voice_channel(channel)
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    player = await voice_client.create_ytdl_player(url, after=lambda: check_queue(server.id))
+    players[server.id] = player
+    player.start()
+
+
+@client.command(pass_context=True)
+async def pause(ctx):
+    id = ctx.message.server.id
+    players[id].pause()
+
+@client.command(pass_context=True)
+async def stop(ctx):
+    id = ctx.message.server.id
+    players[id].stop()
+
+@client.command(pass_context=True)
+async def resume(ctx):
+    id = ctx.message.server.id
+    players[id].resume()
+
+@client.command(pass_context=True)
+async def queue(ctx, url):
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    player = await voice_client.create_ytdl_player(url, after=lambda: check_queue(server.id))
+
+    if server.id in queues:
+        queues[seerver.id].append(player)
+    else:
+        queues[server.id] = [player]
+    await client.say('Video Queued')
 
 
 """
@@ -277,6 +341,15 @@ async def bj(ctx, message):
         await client.say(author + ' and ' + member + ' Tied')
 
 
+"""
+***********************************************************************************************************************
+
+                                        Simple Roll
+                                        
+***********************************************************************************************************************
+"""
+
+
 @client.command()
 async def roll():
     #list of numbers 1 to 6 with their IDs
@@ -285,10 +358,36 @@ async def roll():
     randomnum = random.choice(list)
     #prints random number into discord channel
     await client.say(randomnum)
+"""
+***********************************************************************************************************************
 
-@client.command(pass_context=True)
+                                        Simple Search Functions
+
+***********************************************************************************************************************
+"""
+@client.command()
 async def urban(*arg):
-    await client.say(arg)
+    #'{}' is the input by the users
+    #'+' is what is added after each input
+    #.join is what is use to join each input
+    await client.say('https://www.urbandictionary.com/define.php?term=' +'{}'.format(('+'.join(arg))))
+
+@client.command()
+async def ugg(*, arg):
+    await client.say('https://u.gg/lol/champions/' + arg + '/build/?queueType=normal_aram')
+
+
+@client.command()
+async def opgg(*arg):
+    await client.say('https://na.op.gg/summoner/userName=' + '{}'.format(('+'.join(arg))))
+
+@client.command()
+async def youtube(*arg):
+    await client.say('https://www.youtube.com/results?search_query=' + '{}'.format(('+'.join(arg))))
+
+@client.command()
+async def rabbit():
+    await client.say('https://www.rabb.it/s/mypisc')
 
 
 
