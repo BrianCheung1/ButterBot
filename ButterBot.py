@@ -8,7 +8,7 @@ import os, time, re, subprocess
 from discord.utils import get
 
 
-TOKEN = 'NDE1MjU1NjY4NTUxODQzODUw.XKjcIg.1AkGEUkI6x2FVtfi63SIUllovlo'
+TOKEN = ''
 
 client = commands.Bot(command_prefix = "`")
 client.remove_command('help')
